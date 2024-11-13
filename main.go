@@ -1,24 +1,39 @@
 package main
 
 import (
-  "fmt"
+	"fmt"
+	"gross-store/models"
+	"sync"
 )
 
 //TIP To run your code, right-click the code and select <b>Run</b>. Alternatively, click
 // the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.
 
 func main() {
-  //TIP Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined or highlighted text
-  // to see how GoLand suggests fixing it.
-  s := "gopher"
-  fmt.Println("Hello and welcome, %s!", s)
+	store := &models.Store{
+		Shorts:  20000,
+		Jackets: 20000,
+		Mu:      sync.Mutex{},
+	}
+	wg := &sync.WaitGroup{}
+	shortsCH := make(chan int, store.Shorts)
+	jacketsCH := make(chan int, store.Jackets)
+	for i := 0; i < 25000; i++ {
+		wg.Add(1)
+		go func() {
+			switch i % 2 {
+			case 0:
+				shortsCH <- store.RestShorts(i)
+				wg.Done()
+			case 1:
+				jacketsCH <- store.RestJackets(i)
+				wg.Done()
+			}
+		}()
+	}
 
-  for i := 1; i <= 5; i++ {
-	//TIP You can try debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-	// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>. To start your debugging session, 
-	// right-click your code in the editor and select the <b>Debug</b> option. 
-	fmt.Println("i =", 100/i)
-  }
+	wg.Wait()
+	fmt.Println(store)
 }
 
 //TIP See GoLand help at <a href="https://www.jetbrains.com/help/go/">jetbrains.com/help/go/</a>.
