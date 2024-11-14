@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"gross-store/models"
+	"gross-store/utils"
 	"sync"
 )
 
@@ -63,10 +64,11 @@ func main() {
 	shortsCH, jacketsCH := simulateBuys(wg, store)
 	shortOrders := generateOrderHash(shortsCH)
 	jacketsOrder := generateOrderHash(jacketsCH)
-	for hash := range shortOrders {
-		fmt.Println("short order: ", hash)
-	}
-	for hash := range jacketsOrder {
-		fmt.Println("jacket order: ", hash)
+	channles := make([]<-chan string, 2)
+	channles[1] = jacketsOrder
+	channles[0] = shortOrders
+	results := utils.FanIn(channles...)
+	for r := range results {
+		fmt.Println("order: ", r)
 	}
 }
