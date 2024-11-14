@@ -35,16 +35,16 @@ func simulateBuys(wg *sync.WaitGroup, store *models.Store) (<-chan int, <-chan i
 	jacketsCH := make(chan int, 20000)
 	for i := 0; i < 40000; i++ {
 		wg.Add(1)
-		go func() {
+		go func(n int) {
 			switch i % 2 {
 			case 0:
-				shortsCH <- store.RestShorts(i)
+				shortsCH <- store.RestShorts(n)
 				wg.Done()
 			case 1:
-				jacketsCH <- store.RestJackets(i)
+				jacketsCH <- store.RestJackets(n)
 				wg.Done()
 			}
-		}()
+		}(i)
 	}
 	go func() {
 		wg.Wait()
