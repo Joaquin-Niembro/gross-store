@@ -68,4 +68,5 @@ func main() {
 	for r := range results {
 		fmt.Println("order: ", r)
 	}
+	fmt.Println(store)
 }
