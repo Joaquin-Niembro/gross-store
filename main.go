@@ -6,6 +6,7 @@ import (
 	"gross-store/models"
 	"gross-store/utils"
 	"sync"
+	"sync/atomic"
 )
 
 // TIP To run your code, right-click the code and select <b>Run</b>. Alternatively, click
@@ -67,5 +68,6 @@ func main() {
 	for r := range results {
 		fmt.Println("order: ", r)
 	}
-	fmt.Println(store)
+	fmt.Println("Shorts left: ", atomic.LoadInt32(&store.Shorts))
+	fmt.Println("Jackets left: ", atomic.LoadInt32(&store.Jackets))
 }
