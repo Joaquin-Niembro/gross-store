@@ -58,7 +58,6 @@ func main() {
 	store := &models.Store{
 		Shorts:  20000,
 		Jackets: 20000,
-		Mu:      sync.Mutex{},
 	}
 	wg := &sync.WaitGroup{}
 	shortsCH, jacketsCH := simulateBuys(wg, store)

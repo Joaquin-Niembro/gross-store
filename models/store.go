@@ -1,7 +1,6 @@
 package models
 
 import (
-	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -9,7 +8,6 @@ import (
 type Store struct {
 	Shorts  int32
 	Jackets int32
-	Mu      sync.Mutex
 }
 
 func (s *Store) RestShorts(orderNumber int) int {
