@@ -62,12 +62,9 @@ func main() {
 	}
 	wg := &sync.WaitGroup{}
 	shortsCH, jacketsCH := simulateBuys(wg, store)
-	shortOrders := generateOrderHash(shortsCH)
-	jacketsOrder := generateOrderHash(jacketsCH)
-	channles := make([]<-chan string, 2)
-	channles[1] = jacketsOrder
-	channles[0] = shortOrders
-	results := utils.FanIn(channles...)
+	channels := make([]<-chan string, 2)
+	channels[0], channels[1] = generateOrderHash(shortsCH), generateOrderHash(jacketsCH)
+	results := utils.FanIn(channels...)
 	for r := range results {
 		fmt.Println("order: ", r)
 	}
