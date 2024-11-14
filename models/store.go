@@ -14,12 +14,12 @@ func (s *Store) RestShorts(orderNumber int) int {
 	s.Mu.Lock()
 	s.Shorts--
 	s.Mu.Unlock()
-	return orderNumber
+	return orderNumber * 3
 }
 
 func (s *Store) RestJackets(orderNumber int) int {
 	s.Mu.Lock()
 	s.Jackets--
 	s.Mu.Unlock()
-	return orderNumber
+	return orderNumber * 3
 }
