@@ -14,13 +14,13 @@ func generateOrderHash(ch <-chan int) <-chan string {
 	wg := sync.WaitGroup{}
 	for order := range ch {
 		wg.Add(1)
-		go func() {
+		go func(o int) {
 			h := sha256.New()
-			h.Write([]byte(string(rune(order))))
+			h.Write([]byte(string(rune(o))))
 			bs := h.Sum(nil)
 			output <- fmt.Sprintf("%x", bs)
 			wg.Done()
-		}()
+		}(order)
 	}
 	go func() {
 		wg.Wait()
@@ -52,6 +52,7 @@ func simulateBuys(wg *sync.WaitGroup, store *models.Store) (<-chan int, <-chan i
 	}()
 	return shortsCH, jacketsCH
 }
+
 func main() {
 	store := &models.Store{
 		Shorts:  20000,
@@ -59,12 +60,14 @@ func main() {
 		Mu:      sync.Mutex{},
 	}
 	wg := &sync.WaitGroup{}
-	ch1, ch2 := simulateBuys(wg, store)
-	for n := range ch1 {
-		fmt.Print(n)
+	shortsCH, jacketsCH := simulateBuys(wg, store)
+	shortOrders := generateOrderHash(shortsCH)
+	jacketsOrder := generateOrderHash(jacketsCH)
+	for hash := range shortOrders {
+		fmt.Println("short order: ", hash)
 	}
-	for n := range ch2 {
-		fmt.Print(n)
+	for hash := range jacketsOrder {
+		fmt.Println("jacket order: ", hash)
 	}
 }
 
